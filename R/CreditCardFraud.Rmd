@@ -1,0 +1,170 @@
+---
+title: "Credit Card Fraud Detection"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+The aim of this R project is to build a classifier that can detect credit card fraudulent transactions. We will use a variety of machine learning algorithms that will be able to discern fraudulent from non-fraudulent one.
+### **Loaing the Libraries.**
+```{r}
+library(ranger)
+library(caret)
+```
+
+### **Loading the dataset.**
+```{r}
+library(data.table)
+creditData <- read.csv("creditcard.csv")
+```
+
+### **Data Exploration.**
+```{r}
+dim(creditData)
+head(creditData,5)
+tail(creditData,5)
+```
+
+#### Columns present in the data
+```{r}
+names(creditData)
+```
+
+### **Statistical Analysis of the Data**
+
+#### Summary of the data
+```{r}
+summary(creditData)
+```
+
+#### Mean, Variance & Standard Deviation of the column Amount
+```{r}
+mean(creditData$Amount)
+var(creditData$Amount)
+sd(creditData$Amount)
+```
+
+### **Data Preprocessing**
+
+#### Scaling of Data
+```{r}
+creditData$Amount = scale(creditData$Amount)
+```
+
+#### Removing Unnecessary Columns from Data
+```{r}
+newCreditData = creditData[-c(1)]
+head(newCreditData,5)
+```
+
+#### Splitting the Data into Test and Train data
+```{r}
+library(caTools)
+set.seed(777)
+sampleData = sample.split(newCreditData$Class, SplitRatio = 0.70)
+trainCreditData = subset(newCreditData, sampleData == TRUE)
+testCreditData = subset(newCreditData, sampleData == FALSE)
+```
+
+```{r}
+dim(trainCreditData)
+dim(testCreditData)
+```
+
+#### Logistic Regression Model
+```{r}
+LogisticModel=glm(Class~.,testCreditData,family=binomial())
+summary(LogisticModel)
+```
+
+##### Plotting the outcome
+```{r}
+plot(LogisticModel)
+```
+
+We now compute the ROC of the model in order to analyze its performance. ROC is also known as Receiver Optimistic Characteristics. For this, we will first import the ROC package and then plot our ROC curve to analyze its performance.
+
+##### ROC
+```{r}
+library(pROC)
+logisticPredicted <- predict(LogisticModel, testCreditData, probability = TRUE)
+ROCGraph = roc(testCreditData$Class, logisticPredicted, plot = TRUE, col = "green")
+```
+
+#### Decision Tree Model
+Decision Trees to plot the outcomes of a decision. These outcomes are basically a consequence through which we can conclude as to what class the object belongs to. We will now implement our decision tree model and will plot it using the rpart.plot() function.
+```{r}
+library(rpart)
+library(rpart.plot)
+```
+```{r}
+DecisionTreeModel <- rpart(Class ~ . , creditData, method = 'class')
+predicted_val <- predict(DecisionTreeModel, creditData, type = 'class')
+probability <- predict(DecisionTreeModel, creditData, type = 'prob')
+rpart.plot(DecisionTreeModel)
+```
+
+#### Artificial Neural Network
+Artificial Neural Networks are a type of machine learning algorithm that are modeled after the human nervous system. The ANN models are able to learn the patterns using the historical data and are able to perform classification on the input data. We import the neuralnet package that would allow us to implement our ANNs. Then we proceeded to plot it using the plot() function. Now, in the case of Artificial Neural Networks, there is a range of values that is between 1 and 0. We set a threshold as 0.5, that is, values above 0.5 will correspond to 1 and the rest will be 0. 
+```{r}
+library(neuralnet)
+ANNModel <- neuralnet (Class~., trainCreditData, linear.output=FALSE)
+plot(ANNModel)
+```
+
+```{r}
+predictedANN = compute(ANNModel, testCreditData)
+resultSetANN = predictedANN$net.result
+resultSetANN = ifelse(resultSetANN>0.5,1,0)
+resultSetANN  = data.frame(resultSetANN)
+summary(resultSetANN)
+names(resultSetANN)
+colnames(resultSetANN)
+str(resultSetANN)
+View(resultSetANN)
+plot(resultSetANN$resultSetANN)
+hist(resultSetANN$resultSetANN)
+table(resultSetANN$resultSetANN)
+max(resultSetANN)
+x = resultSetANN[resultSetANN %in% 1, ]
+
+names(resultSetANN)
+length(x)
+barplot(x)
+```
+
+#### Gradient Boosting (GBM)
+Gradient Boosting is a popular machine learning algorithm that is used to perform classification and regression tasks. This model comprises of several underlying ensemble models like weak decision trees. These decision trees combine together to form a strong model of gradient boosting.
+
+```{r}
+library(gbm, quietly=TRUE)
+
+system.time(
+       GBMModel <- gbm(Class ~ .
+               , distribution = "bernoulli"
+               , data = rbind(trainCreditData, testCreditData)
+               , n.trees = 500
+               , interaction.depth = 3
+               , n.minobsinnode = 100
+               , shrinkage = 0.01
+               , bag.fraction = 0.5
+               , train.fraction = nrow(trainCreditData) / (nrow(trainCreditData) + nrow(testCreditData))
+)
+)
+
+gbm.iter = gbm.perf(GBMModel, method = "test")
+
+```
+
+```{r}
+model.influence = relative.influence(GBMModel, n.trees = gbm.iter, sort. = TRUE)
+#Plot the gbm model
+plot(GBMModel)
+```
+
+```{r}
+gbmTest = predict(GBMModel, newdata = testCreditData, n.trees = gbm.iter)
+gbm_auc = roc(testCreditData$Class, gbmTest, plot = TRUE, col = "red")
+
+print(gbm_auc)
+```

@@ -1,0 +1,37 @@
+1. Desktop Requirement: 16 GB RAM with 100 GB HD. 64 bit OS. Tnternet connection enabled
+1.1 Internet access to download few open soource libraries mentioned in step 4
+
+2. Download and Install R from https://cran.r-project.org/(Install any one - 32 or 64 bit, not both)
+2.1 Download and Install R Studio desktop (free) from https://www.rstudio.com/
+
+3. R Tool (take latest one) from link https://cran.r-project.org/bin/windows/Rtools
+
+4. Run script Libraries.R or "Libraries.txt" on R prompt. If anytime question is asked then select "Yes"
+
+5. Install MS XL (latest version or 2016 version)
+
+6. Install Java 8
+
+7. Download Data files from locations
+
+https://community.qlik.com/servlet/JiveServlet/previewBody/18789-102-1-25268/AirPassengers.csv
+
+# Remove the first column as index after download
+https://github.com/vincentarelbundock/Rdatasets/blob/master/csv/MASS/Boston.csv
+
+# Remove the first column as index after download
+https://github.com/vincentarelbundock/Rdatasets/blob/master/csv/datasets/iris.csv
+
+8. Text Analytics - Lemmantisation:
+download and unzip using 7-Zip software and keep in "D:\trainings"
+http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/english-par-linux-3.2-utf8.bin.gz
+http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/english-chunker-par-linux-3.2-utf8.bin.gz
+http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/tree-tagger-windows-3.2.zip
+
+Downlaod and install
+https://www.activestate.com/activeperl/downloads/thank-you?dl=http://downloads.activestate.com/ActivePerl/releases/5.24.1.2402/ActivePerl-5.24.1.2402-MSWin32-x64-401627.exe
+
+Follow the steps: D:\trainings\tree-tagger-windows-3.2\TreeTagger  (Step mention after 7 is importent too)
+test    .\bin\tag-english INSTALL.txt
+
+

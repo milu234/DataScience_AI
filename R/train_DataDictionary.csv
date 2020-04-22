@@ -1,0 +1,9 @@
+colName,col_class,UniqueLength,TopValues
+MPG,numeric,127,"Min: 9, Max: 46.6, Mean: 23.45"
+CYLINDERS,integer,5,"Min: 3, Max: 8, Mean: 5.47"
+ENGINE DISP,numeric,81,"Min: 68, Max: 455, Mean: 194.41"
+HORSEPOWER,integer,93,"Min: 46, Max: 230, Mean: 104.47"
+WEIGHT,integer,346,"Min: 1613, Max: 5140, Mean: 2977.58"
+ACCELERATE,numeric,95,"Min: 8, Max: 24.8, Mean: 15.54"
+YEAR,integer,13,"Min: 70, Max: 82, Mean: 75.98"
+ORIGIN,factor,3,"American, Japanese, European"
